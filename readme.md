@@ -24,6 +24,11 @@ This project connects to a Snowflake database, executes various queries to analy
 
 This project connects to Google BigQuery, retrieves datasets, and executes queries to analyze transport data.
 
+### Databricks Connection
+
+This project connects to a Databricks workspace, retrieves data from a specified table, and displays the results in a Pandas DataFrame.
+
+
 ## Technologies Used
 
 - Python
@@ -64,6 +69,8 @@ This project connects to Google BigQuery, retrieves datasets, and executes queri
 - **Cursor Closure Error**: Fixed an issue where the cursor was closed before executing a query. Implemented proper error handling to ensure the cursor remains open during operations.
 
 - **Environment Configuration**: Ensured sensitive data is not exposed by using `.gitignore` to exclude configuration files from version control.
+
+- **Databricks Connection Errors**: Faced issues with authentication and connection timeouts. Resolved by using the correct JDBC URL and ensuring the cluster was running.
 
 ## Contributing
 
