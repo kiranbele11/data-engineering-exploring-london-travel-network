@@ -1,2 +1,7 @@
- config.ini
+# Ignore config files with sensitive data
+config.env
+*.env
+.env
+*.cfg
+config.ini
  
