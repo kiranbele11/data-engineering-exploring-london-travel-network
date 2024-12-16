@@ -1,0 +1,467 @@
+==============================================================================
+Databricks JDBC Driver Release Notes 
+==============================================================================
+
+The release notes provide details of enhancements, features, known issues, and
+workflow changes in Databricks JDBC Driver 2.6.40, as well as the version 
+history. 
+
+
+2.6.40 =======================================================================
+
+Released 2024-08-16
+
+Resolved Issues
+The following issue has been resolved in Databricks JDBC Driver 2.6.40.
+
+ * [SPARKJ-911] Security improvement
+
+ * [SPARKJ-892] Log improvement. Reduced WARNING: Invalid cookie header log.
+
+ * [SPARKJ-933] Resolved issue with OAuth authorization URL check.
+
+
+Known Issues 
+The following are known issues that you may encounter due to limitations in 
+the data source, the driver or an application. 
+
+ * [SPARKJ-654] In some cases, when using IBM JRE and the Arrow result set 
+   serialization feature, the driver handles the Unicode characters 
+   incorrectly.
+ 
+   As a workaround, set the EnableArrow property to 0 in the connection  
+   string.
+
+ * [SPARKJ-573] Issue when deserializing Apache Arrow data with Java JVMs 
+   version 11 or higher, due to compatibility issues. 
+   
+   As a workaround, if you encounter the "Error occurred while deserializing 
+   arrow data: sun.misc.Unsafe or java.nio.DirectByteBuffer.<init>(long, int) 
+   not available" error, add the follwing line:
+   
+   --add-opens java.base/java.nio=ALL-UNNAMED
+
+   For more information, see the Installation and Configuration Guide.
+
+ * [SPARKJ-330] Issue with date and timestamp before the beginning of the 
+   Gregorian calendar when connecting to Spark 2.4.4 or later, or versions 
+   previous to 3.0, with Arrow result set serialization.
+ 
+   When using Spark 2.4.4 or later, or versions previous to Spark 3.0, DATE 
+   and TIMESTAMP data before October 15, 1582 may be returned incorrectly if 
+   the server supports serializing query results using Apache Arrow. This 
+   issue should not impact most distributions of Apache Spark.
+
+   To confirm if your distribution of Spark 2.4.4 or later has been impacted 
+   by this issue, you can execute the following query:
+
+   SELECT DATE '1581-10-14'
+
+   If the result returned by the connector is 1581-10-24, then you are 
+   impacted by the issue. In this case, if your data set contains date and/or
+   timestamp data earlier than October 15, 1582, you can work around this 
+   issue by adding EnableArrow=0 in your connection URL to disable the Arrow
+   result set serialization feature. 
+
+ * [SPARKJ-267] The JDBC 4.0 version of the connector fails to connect to 
+   servers that require encryption using TLS 1.1 or later.
+
+   When you attempt to connect to the server, the connection fails and the
+   connector returns an SSL handshake exception. This issue occurs only when
+   you run the connector using Java Runtime Environment (JRE) 6.0. 
+
+   As a workaround, run the connector using JRE 7.0 or 8.0.
+
+ * When retrieving data from a BINARY column, a ClassCastException error 
+   occurs.
+
+   In Spark 1.6.3 or earlier, the server sometimes returns a 
+   ClassCastException error when attempting to retrieve data from a BINARY 
+   column.
+
+   This issue is fixed as of Spark 2.0.0.
+
+   For more information, see the JIRA issue posted by Apache named "When
+   column type is binary, select occurs ClassCastException in Beeline" at
+   https://issues.apache.org/jira/browse/SPARK-12143.
+
+
+Workflow Changes =============================================================
+
+The following changes may disrupt established workflows for the connector. 
+
+
+2.6.38 -----------------------------------------------------------------------
+
+ * [SPARKJ-825] Updated access token information
+
+   The access token information has been updated in the Installation and 
+   Configuration Guide.
+
+
+2.6.33 -----------------------------------------------------------------------
+
+ * [SPARKJ-646] Removed support for Java 7.0
+
+   Beginning with this release, the driver no longer supports Java 7.0. For 
+   a list of supported JDBC versions, see the Installation and Configuration 
+   Guide.
+
+
+2.6.29 -----------------------------------------------------------------------
+
+ * [SPARKJ-618] Renamed jar files
+
+   Beginning with this release, the following files have been renamed:
+   - SparkJDBC41.jar is now DatabricksJDBC41.jar
+   - SparkJDBC42.jar is now DatabricksJDBC42.jar
+
+
+2.6.21 -----------------------------------------------------------------------
+
+ * [SPARKJ-534] Renamed connection properties
+
+   Beginning with this release, the following connection properties have been 
+   renamed:
+   - ClusterAutostartRetry is now TemporarilyUnavailableRetry
+   - ClusterAutostartRetryTimeout is now TemporarilyUnavailableRetryTimeout
+
+
+2.6.20 -----------------------------------------------------------------------
+
+ * [SPARKJ-474] Updated catalog support 
+
+   When connecting to a server that supports multiple catalogs, the connector
+   no longer reports the catalog for schemas and tables as SPARK. Instead, the
+   catalog is the one reported by the Spark server. For more information, see
+   the Installation and Configuration Guide.
+   
+   
+2.6.19 -----------------------------------------------------------------------
+
+ * [SPARKJ-483] Removed third-party libraries
+
+   Beginning with this release, the connector no longer includes the ZooKeeper
+   and Jute libraries in the JAR file. 
+
+
+2.6.18 -----------------------------------------------------------------------
+
+ * [SPARKJ-296][SPARKJ-297] Removed support for 2.1
+
+   Beginning with this release, the connector no longer supports servers that
+   run Spark version 2.1. For information about the supported Spark versions,
+   see the Installation and Configuration Guide.
+
+ * [SPARKJ-288][SPARKJ-289] Removed support for JDBC 4.0 (Java 6)
+
+   Beginning with this release, the connector no longer supports JDBC 4.0 
+   (Java 6). For a list of supported JDBC versions, see the Installation and
+   Configuration Guide.
+
+
+2.6.11 -----------------------------------------------------------------------
+
+ * [SPARKJ-301] Removed support for Spark 1.5.2 and earlier, as well as 2.0
+
+   Beginning with this release, the driver no longer supports servers that run
+   any of the following Spark versions:
+   - Versions 1.5.2 and earlier
+   - Version 2.0
+
+   For information about the supported Spark versions, see the Installation 
+   and Configuration Guide.
+
+ * [SPARKJ-296][SPARKJ-298] Deprecated support for Spark 1.6 and 2.1
+
+   Beginning with this release, support for Spark versions 1.6 and 2.1 has
+   been deprecated. For information about the supported Spark versions, 
+   see the Installation and Configuration Guide.
+
+ * [SPARKJ-288] Deprecated support for JDBC 4.0 (Java 6)
+ 
+   Beginning with this release, support for JDBC 4.0 (Java 6) has been
+   deprecated. Support will be removed in a future release. For a list of
+   supported JDBC versions, see the Installation and Configuration Guide.
+
+
+Version History ==============================================================
+
+2.6.39 -----------------------------------------------------------------------
+
+Released 2024-07-25
+
+Enhancements & New Features
+ 
+ * [SPARKJ-718] OIDC discovery endpoint support
+
+   The connector can now enable OIDC discovery endpoint to fetch token and 
+   authorization endpoint. For more information, see the Installation and
+   Configuration Guide.
+
+ * [SPARKJ-816] Updated Arrow support
+
+   The connector now uses Apache Arrow version 14.0.2. Previously, the 
+   connector used Apache Arrow version 9.0.0.
+   
+ * [SPARKJ-817] ProxyIgnoreList support
+   
+   The connector now supports ProxyIgnoreList property when UseProxy is set to
+   1. For more information, see the Installation and Configuration Guide.
+
+ * [SPARKJ-829] Refresh token support
+   
+   The connector now supports the optional refresh token. It saves the access
+   token and reuses it for new connections as long as it is valid. If the 
+   connector cannot renew the access token using the refresh token, it will 
+   sign in again. For more information, see the Installation and Configuration
+   Guide.
+
+ * [SPARKJ-836] Query type support
+
+   The connector now includes query type to the query profile to help with 
+   query type identification.
+
+ * [SPARKJ-870] OAuth Logging improvements
+
+   Enhancements to OAuthlogging make resolving OAuth issues easier. 
+
+ * [SPARKJ-877] Updated authentication support
+
+   The connector now supports Browser Based (U2M) and Client Credentials (M2M)
+   authentication on GCP cloud. 
+   
+   On Azure and GCP these are the new default values:
+   - OAuth2ConnAuthAuthorizeEndpoint: $(host) +/oidc/oauth2/v2.0/authorize
+   - OAuth2ConnAuthTokenEndpoint: $(host) +/oidc/oauth2/v2.0/token
+   - OAuth2ClientId: databricks-sql-jdbc
+   - OAuth2ConnAuthAuthscopeKey: sql offline_access
+   
+   On Azure, if the application specifies a client ID that is different from 
+   the default value, the default scope is:
+   - For U2M: 2ff814a6-3304-4ab8-85cb-cd0e6f879c1d/user_impersonation,
+     offline_access
+   - For M2M: 2ff814a6-3304-4ab8-85cb-cd0e6f879c1d/.default
+
+   You can now configure the OAuth redirect port. To do this, set the 
+   OAuth2RedirectUrlPort property to your port. For more information, see the 
+   Installation and Configuration Guide.
+
+
+Resolved Issues
+The following issue has been resolved in Databricks JDBC Driver 2.6.39.
+
+ * [SPARKJ-878] When a report with excessive log entries is generated, the
+   connector returns 'StatusLogger Unrecognized' error.
+
+
+2.6.38 -----------------------------------------------------------------------
+
+Released 2024-04-05
+
+Resolved Issues
+The following issues have been resolved in Databricks JDBC Driver 2.6.38.
+
+ * [SPARKJ-824] In parameterized queries the decimal data type truncates.
+
+
+2.6.37 -----------------------------------------------------------------------
+
+Released 2024-03-05
+
+Enhancements & New Features
+ 
+ * [SPARKJ-707] QueryProfile support
+
+   IHadoopStatement now supports QueryProfile object that contains getQueryIds
+   to retrieve a list of query IDs.
+ 
+ * [SPARKJ-708] ASync bit support
+
+   The connector now supports the ASync operations for metadata thrift calls,
+   if the server uses SPARK_CLI_SERVICE_PROTOCOL_V9. To do this, set the 
+   EnableAsyncModeForMetadataOperation property to 1. For more information,
+   see the Installation and Configuration Guide.
+
+ * [SPARKJ-716] Parameterized Query support
+
+   The connector now supports the parameterized query in the native mode, if 
+   the server uses SPARK_CLI_SERVICE_PROTOCOL_V8.
+
+ * [SPARKJ-733] JWT assertion support
+
+   The connector now supports JWT assertion OAuth using client credentials. To
+   do this, set the UseJWTAssertion property to 1. For more information, see 
+   the Installation and Configuration Guide.
+
+ * [SPARKJ-739] UC Volume ingestion support
+
+   The connector now supports UC Volume ingestion commands. To do this, set 
+   the UseNativeQuery to 1. For more information, see the Installation and 
+   Configuration Guide.
+
+ * [SPARKJ-748] Updated Jackson libraries
+
+   The connector now uses the following libraries for the Jackson JSON parser:
+   - jackson-annotations 2.16.0 (previously 2.15.2)
+   - jackson-core 2.16.0 (previously 2.15.2)
+   - jackson-databind-2.16.0 (previously 2.15.2)
+
+
+Resolved Issues
+The following issues have been resolved in Databricks JDBC Driver 2.6.37.
+
+ * [SPARKJ-714] The connector contains unshaded class files in META-INF 
+   directory. 
+
+ * [SPARKJ-726] The connector returns an assert error in the getMessage() 
+   method, if JVM enables assertions.  
+
+
+2.6.36 -----------------------------------------------------------------------
+
+Released 2023-11-9
+
+Enhancements & New Features
+
+ * [SPARKJ-720] Token cache support
+
+   The connector now supports disabling the refresh token cache. To do this, 
+   set the EnableTokenCache property to 0. The TokenCachePassPhrase property
+   needs to be set to a passphrase when using token cache. For more 
+   information, see the Installation and Configuration Guide.
+
+Resolved Issues
+The following issues have been resolved in Databricks JDBC Driver 2.6.36.
+
+ * [SPARKJ-720] The driver had issues with the OAuth token cache expiring. 
+   
+ * [SPARKJ-724] Package org.apache.commons.lang does not exist issue.
+ 
+ * [SPARKJ-725] JDBC Driver throws exception if the string length of HOST is 
+   less than 20 when using OAuth.
+
+
+2.6.35 -----------------------------------------------------------------------
+
+Released 2023-09-19
+
+Enhancements & New Features
+
+ * [SPARKJ-634] OAuth 2.0 M2M based authentication support
+
+   The connector now supports M2M based OAuth 2.0 authentication. To do this, 
+   set the Auth_Flow property to 1. For more information, see the Installation
+   and Configuration Guide.
+
+ * [SPARKJ-640] Server side encryption support
+
+   The connector now supports server side encryption with user provided keys.
+
+ * [SPARKJ-634] OAuth 2.0 browser based authentication support
+
+   The connector now supports browser based OAuth 2.0 authentication. To do 
+   this, set the Auth_Flow property to 2. For more information, see the 
+   Installation and Configuration Guide.
+
+ * [SPARKJ-634] OAuthWebServerTimeout support
+
+   The connector now waits for the browser response during OAuth 2.0 
+   authentication before timing out. For more information, see the 
+   Installation and Configuration Guide. 
+
+* [SPARKJ-703] Improved security feature
+
+   The connector has been updated with improved security feature for 
+   connection properties to prevent SSRF attacks.
+ 
+
+Resolved Issues
+The following issue has been resolved in Databricks JDBC Driver 2.6.35.
+
+ * [SPARKJ-688] The connector turns on the socket timeout by default for HTTP
+   connections and provides default values.
+
+
+2.6.34 -----------------------------------------------------------------------
+
+Released 2023-06-30
+
+Enhancements & New Features
+
+ * [SPARKJ-661][SPARKJ-693] Updated third-party library
+
+   The connector has been upgraded with the following third-party libraries:
+   - Apache Arrow 9.0.0 (previously 7.0.0)
+   - Apache HttpClient 4.5.14 (previously 4.5.13)
+   - Apache HttpCore 4.4.16 (previously 4.4.14)
+   - Byte Buddy 1.14.5 (previously 1.14.0) 
+   - flatbuffers 23.5.26 (previously 1.12.0) 
+   - Google Guava 32.0.1 (previously 31.1)
+   - jackson-annotations-2.15.2 (previously 2.13.4)
+   - jackson-core-2.15.2 (previously 2.13.4)
+   - jackson-databind-2.15.2 (previously 2.13.4.2)
+   - log4j-api 2.20.0 (previously 2.17.1)
+   - log4j-core 2.20.0 (previously 2.17.1)
+   - log4j-slf4j-impl 2.20.0 (previously 2.17.1)
+   - lz4 1.8.0 (previously 1.7.1)
+   - netty-buffer 4.1.94.Final (previously 4.1.82.Final)
+   - netty-common 4.1.94.Final (previously 4.1.82.Final)
+   - slf4j 1.7.36 (previously 1.7.30)
+   - thrift 0.17.0 (previously 0.13.0)
+   
+ * [SPARKJ-680] SonarCloud scan feature
+
+   You can now configure SonarCloud scan feature for the connector which 
+   identifies and logs the expected security issues in the source code.
+
+
+Resolved Issues
+The following issues have been resolved in Databricks JDBC Connector 2.6.34.
+
+ * [SPARKJ-622] The REMARKS column of the tables metadata does not populate 
+   with comments. 
+
+ * [SPARKJ-655] When a query fails to connect to the server, the connector 
+   does not clean up the unused threads.
+
+ * [SPARKJ-666] The connector shows the SQLState and the error messages
+   incorrectly.
+
+ * [SPARKJ-667] When a resultset closure operation returns an error, the 
+   connector does not clean up the operation handle entries from the heartbeat
+   thread.
+
+ * [SPARKJ-676] The connector checks the server protocol version incorrectly.
+
+
+2.6.33 -----------------------------------------------------------------------
+
+Released 2023-02-10
+
+Enhancements & New Features
+
+ * [SPARKJ-585] SQLPrimaryKeys and SQLForeignKeys support
+
+   The driver now supports SQLPrimaryKeys and SQLForeignKeys catalog 
+   functions when connecting to a server of a supported version.
+
+
+2.6.32 -----------------------------------------------------------------------
+
+Released 2022-11-04
+ 
+Resolved Issues
+The following issues have been resolved in Databricks JDBC Driver 2.6.32.
+
+ * [SPARKJ-627] When using cloud fetch, the driver does not clean up certain
+   resources properly.
+
+ * [SPARKJ-631] When libcurl logging is enabled, the driver leaks the URLs of
+   cloud fetch results.
+
+ * [SPARKJ-632] The credentials leaked by the driver are passed into error 
+   messages. 
+
+
+============================================================================== 
