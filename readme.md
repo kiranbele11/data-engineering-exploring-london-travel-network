@@ -15,22 +15,22 @@ This repository contains various data engineering projects that connect to diffe
 ### Redshift Connection
 
 This project connects to an Amazon Redshift database, retrieves data from the `journeys` table, and displays the results in a Pandas DataFrame.
-![Redshift Connection Screenshot](/Users/kiranbele/Documents/Projects/data-engineering-exploring-london-travel-network/aws-redshift-database.png)
+![Redshift Connection Screenshot](images/aws-redshift-database.png)
 
 ### Snowflake Connection
 
 This project connects to a Snowflake database, executes various queries to analyze transport data, and outputs the results.
-![Snowflake Connection Screenshot](/Users/kiranbele/Documents/Projects/data-engineering-exploring-london-travel-network/snowflake-table.png)
+![Snowflake Connection Screenshot](images/snowflake-table.png)
 
 ### BigQuery Connection
 
 This project connects to Google BigQuery, retrieves datasets, and executes queries to analyze transport data.
-![BigQuery Connection Screenshot](/Users/kiranbele/Documents/Projects/data-engineering-exploring-london-travel-network/google-big-query-table.png)
+![BigQuery Connection Screenshot](images/google-big-query-table.png)
 
 ### Databricks Connection
 
 This project connects to a Databricks workspace, retrieves data from a specified table, and displays the results in a Pandas DataFrame.
-![Databricks Connection Screenshot](/Users/kiranbele/Documents/Projects/data-engineering-exploring-london-travel-network/databricks-sql-warehouse.png) 
+![Databricks Connection Screenshot](images/databricks-sql-warehouse.png) 
 
 
 ## Technologies Used
